@@ -24,3 +24,7 @@ fetch('http://localhost:3000/api/products')
 // TODO https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals
 
 //TODO COMMIT CODE TO GITHUB- Commit to GITHUB NOW
+
+
+// TODO Webinar UPDATE from MENTOR 
+//Read Functional and Technical specification document as first step and highlight important steps. Scott has already highlighted some
