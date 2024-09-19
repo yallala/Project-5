@@ -20,11 +20,15 @@
 
 // console.log(message)
 
-
+//Milestone#5 -Collecting the ID of a product you wish to display
 let str = window.location.href;
 let url = new URL(str);
 let id = url.searchParams.get("id");
+
+// Milestone#6 - Inserting a product and its details into a product page
 let productData = [];
+
+
 
 // Display product information on the product page
 const fetchProduct = async () => {
@@ -56,18 +60,52 @@ const fetchProduct = async () => {
 };
 fetchProduct();
 
-// {
-//     "colors": [
-//         "Red",
-//         "Silver"
-//     ],
-//     "_id": "034707184e8e4eefb46400b5a3774b5f",
-//     "name": "Kanap Thyoné",
-//     "price": 1999,
-//     "imageUrl": "http://localhost:3000/images/kanap07.jpeg",
-//     "description": "EMauris imperdiet tellus ante, sit amet pretium turpis molestie eu. Vestibulum et egestas eros. Vestibulum non lacus orci.",
-//     "altTxt": "Photo of a red sofa, two seats"
+// Milestone #7: Adding products to the cart
 
+// Define the cartButton variable
+let cartButton = document.getElementById("addToCart");
 
+// Listen for the click event
+cartButton.addEventListener("click", () => {
 
+    // Retrieve the current contents of the local storage
+    let productArray = JSON.parse(localStorage.getItem("product"))
+
+    // Define the variables color and quantity
+    let color = document.getElementById("colors").value;
+    let quantity = Number(document.getElementById("quantity").value);
+
+    // Create a JS object with the product information
+    let productInfos = {
+        id: id,
+        color: color,
+        quantity: quantity
+    }
+
+    // If the color or quantity is not selected
+    if (color == "" || quantity == "") {
+        alert("Please specify the color and quantity");
+
+    //If the product is not in the cart page then push it
+    } else if (productArray == null) {
+        productArray = [];
+        productArray.push(productInfos)
+        localStorage.setItem("product", JSON.stringify(productArray));
+
+    // If the cart already contains a product, then simply update the quantity of existing product
+    } else {
+        const findProduct = productArray.find(product => product.id === id && product.color === color)
+        if (findProduct != undefined) {
+
+            let newQuantity = Number(findProduct.quantity);
+            newQuantity += quantity;
+            findProduct.quantity = newQuantity;
+            localStorage.setItem("product", JSON.stringify(productArray));
+
+        } else {
+            productArray.push(productInfos)
+            localStorage.setItem("product", JSON.stringify(productArray));
+        }
+    }
+});
 

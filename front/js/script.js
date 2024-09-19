@@ -10,7 +10,7 @@ fetch('http://localhost:3000/api/products')
 
     .catch(err => {
         console.log(err);
-        throw err; 
+        throw err;
     });
 
 function insertProducts(products) {
