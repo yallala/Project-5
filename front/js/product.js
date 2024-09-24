@@ -1,24 +1,3 @@
-// TODO Get product id from URL query parameter
-
-// TODO Look at the resources in milestone 5
-
-// TODO Continue javascript course. Spend time on course work this weekend. It is required for milestone #6
-
-// TODO use fetch api for only one product 
-
-// TODO Insert product details in page 
-
-// REFERENCE use the commented out code from insertProducts.html as guide
-// fetch('http://localhost:3000/api/products')
-//     .then(data => {
-//         return data.json();
-//     })
-
-// example:
-// const website = 'freeCodeCamp'
-// const message = `Welcome to ${website}`
-
-// console.log(message)
 
 //Milestone#5 -Collecting the ID of a product you wish to display
 let str = window.location.href;
@@ -26,36 +5,33 @@ let url = new URL(str);
 let id = url.searchParams.get("id");
 
 // Milestone#6 - Inserting a product and its details into a product page
-let productData = [];
-
-
+// let productData = [];
 
 // Display product information on the product page
 const fetchProduct = async () => {
     fetch(`http://localhost:3000/api/products/${id}`)
         .then((res) => res.json())
-        .then((promise) => {
-            productData = promise;
+        .then((product) => {
 
             // Product image
             let productImg = document.querySelector(".item__img").innerHTML = `
-            <img src="${productData.imageUrl}" alt="${productData.altTxt}">`;
+            <img src="${product.imageUrl}" alt="${product.altTxt}">`;
 
             // Product title
-            let productTitle = document.getElementById("title").innerText = `${productData.name}`;
+            let productTitle = document.getElementById("title").innerText = `${product.name}`;
 
             // Product price 
-            let productPrice = document.getElementById("price").innerText = `${productData.price}`;
+            let productPrice = document.getElementById("price").innerText = `${product.price}`;
 
             // Product description 
-            let productDescription = document.getElementById("description").innerText = `${productData.description}`;
+            let productDescription = document.getElementById("description").innerText = `${product.description}`;
 
             // Product options (colors)
-            for (let i = 0; i < productData.colors.length; i++) {
+            for (let i = 0; i < product.colors.length; i++) {
                 let productOption = document.getElementById("colors").innerHTML += `
-            <option value="${productData.colors[i]}">${productData.colors[i]}</option>`;
+            <option value="${product.colors[i]}">${product.colors[i]}</option>`;
             }
-        
+
         });
 };
 fetchProduct();
@@ -86,13 +62,16 @@ cartButton.addEventListener("click", () => {
     if (color == "" || quantity == "") {
         alert("Please specify the color and quantity");
 
-    //If the product is not in the cart page then push it
+        //If the product is not in the cart page then push it
     } else if (productArray == null) {
         productArray = [];
         productArray.push(productInfos)
         localStorage.setItem("product", JSON.stringify(productArray));
+        alert("Product is successfully added");
 
-    // If the cart already contains a product, then simply update the quantity of existing product
+        //TODO Add alert for user so they know their product is added.  Product is succesfully added
+
+        // If the cart already contains a product, then simply update the quantity of existing product
     } else {
         const findProduct = productArray.find(product => product.id === id && product.color === color)
         if (findProduct != undefined) {
@@ -101,10 +80,11 @@ cartButton.addEventListener("click", () => {
             newQuantity += quantity;
             findProduct.quantity = newQuantity;
             localStorage.setItem("product", JSON.stringify(productArray));
-
+            alert("Product is successfully added");
         } else {
             productArray.push(productInfos)
             localStorage.setItem("product", JSON.stringify(productArray));
+            alert("Product is successfully added");
         }
     }
 });
