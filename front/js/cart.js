@@ -55,17 +55,23 @@ function handleDeleteItem($event) {
     // return function () {
     // console.log($event.target);
     // console.log($event.target.closest("article"))
-    const articleElement = $event.target.closest("article");
-    console.log(articleElement.dataset.id);
-    console.log(articleElement.dataset.color);
-    //FIXME Update the code to also consider the color when filtering the cart
 
-    // let cart = getCartFromLocalStorage();
-    // cart = cart.filter((cartItem) => cartItem.id !== productId  ) ;
-    // saveCartToLocalStorage(cart);
-    // cartItemElement.remove();
-    // updateTotals(cart);
-    // };
+    const articleElement = $event.target.closest("article");
+
+
+    if (articleElement && articleElement.dataset.id && articleElement.dataset.color) {
+        const productId = articleElement.dataset.id;
+        const productColor = articleElement.dataset.color;
+
+        let cart = getCartFromLocalStorage();
+
+        cart = cart.filter(cartItem => !(cartItem.id === productId && cartItem.color === productColor));
+        saveCartToLocalStorage(cart);
+
+        articleElement.remove();
+        updateTotals(cart);
+
+    };
 }
 
 
