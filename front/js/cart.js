@@ -42,7 +42,7 @@ function updateTotals(cart) {
 
 function handleQuantityChange(cart, index) {
     return function (event) {
-        console.log(JSON.stringify(cart));
+        // console.log(JSON.stringify(cart));
         const newQuantity = event.target.value;
         cart[index].quantity = parseInt(newQuantity);
         saveCartToLocalStorage(cart);
@@ -50,30 +50,22 @@ function handleQuantityChange(cart, index) {
     };
 }
 
-// function handleDeleteItem(cartItemElement, productId) {
+/**
+ * Handle deleting an item
+ * 
+ * @param {object} $event - event information
+ */
 function handleDeleteItem($event) {
-    // return function () {
-    // console.log($event.target);
-    // console.log($event.target.closest("article"))
-
     const articleElement = $event.target.closest("article");
+    const productId = articleElement.dataset.id;
+    const productColor = articleElement.dataset.color;
+    let cart = getCartFromLocalStorage();
 
-
-    if (articleElement && articleElement.dataset.id && articleElement.dataset.color) {
-        const productId = articleElement.dataset.id;
-        const productColor = articleElement.dataset.color;
-
-        let cart = getCartFromLocalStorage();
-
-        cart = cart.filter(cartItem => !(cartItem.id === productId && cartItem.color === productColor));
-        saveCartToLocalStorage(cart);
-
-        articleElement.remove();
-        updateTotals(cart);
-
-    };
-}
-
+    cart = cart.filter(cartItem => !(cartItem.id === productId && cartItem.color === productColor));
+    saveCartToLocalStorage(cart);
+    articleElement.remove();
+    updateTotals(cart);
+};
 
 async function displayCart() {
     const cart = getCartFromLocalStorage();
@@ -136,6 +128,9 @@ async function displayCart() {
 
 displayCart();
 
+/**
+ * Validate the fields in the form
+ */
 function validateOrder() {
     const formFields = {
         firstName: {
@@ -152,7 +147,7 @@ function validateOrder() {
         },
         address: {
             element: document.getElementById("address"),
-            regex: /^[a-zA-Zèé\- ]+$/,
+            regex: /^[a-z0-9A-Zèé\- ]+$/,
             errorId: "addressErrorMsg",
             errorMsg: "The address format is incorrect",
         },
@@ -188,7 +183,7 @@ function validateOrder() {
 
         if (allValid) {
             const productArray = JSON.parse(localStorage.getItem("product"));
-            const productId = productArray.map((product) => product.id);
+            const products = productArray.map((product) => product.id);
 
             const orderInfos = {
                 contact: {
@@ -198,7 +193,7 @@ function validateOrder() {
                     city: formFields.city.element.value,
                     email: formFields.email.element.value,
                 },
-                products: productId,
+                products,
             };
 
             fetch("http://localhost:3000/api/products/order", {
