@@ -1,16 +1,49 @@
 
 
 const productCache = [];
+/**
+ * Retrieves the cart data from local storage.
+ *
+ * This function checks if there is any stored cart data under the key "product" in localStorage.
+ * If the data exists, it parses the JSON string and returns the cart array. If no data is found,
+ * it returns an empty array.
+ *
+ * @function getCartFromLocalStorage
+ * @returns {Array} An array containing the cart items, or an empty array if no items are found.
+ */
 
 function getCartFromLocalStorage() {
     const cart = JSON.parse(localStorage.getItem("product")) || [];
     return cart;
 }
 
+/**
+ * Saves the cart data to local storage.
+ *
+ * This function converts the cart array into a JSON string and stores it
+ * under the key "product" in localStorage. It overwrites any existing data
+ * associated with the key.
+ *
+ * @function saveCartToLocalStorage
+ * @param {Array} cart - The array of cart items to be saved in local storage.
+ * @returns {void}
+ */
+
 function saveCartToLocalStorage(cart) {
     localStorage.setItem("product", JSON.stringify(cart));
 }
-
+/**
+ * Fetches product data from an API or cache.
+ *
+ * This function first checks if the product data is available in the cache (`productCache`).
+ * If the product is found in the cache, it returns the cached data. Otherwise, it fetches
+ * the product data from the API using the provided product ID, caches the result, and returns it.
+ *
+ * @async
+ * @function fetchProductData
+ * @param {string} productId - The unique identifier for the product.
+ * @returns {Promise<Object>} A promise that resolves to the product data object.
+ */
 async function fetchProductData(productId) {
     const cachedProduct = productCache.find((p) => p._id === productId);
     if (cachedProduct) {
@@ -25,7 +58,17 @@ async function fetchProductData(productId) {
     productCache.push(productData);
     return productData;
 }
-
+/**
+ * Updates the total quantity and total price in the shopping cart.
+ *
+ * This function calculates the total quantity and total price of all items in the cart.
+ * It retrieves product information from the cache, multiplies the product price by its quantity,
+ * and updates the DOM elements that display the total quantity and total price.
+ *
+ * @function updateTotals
+ * @param {Array} cart - The array of cart items, each containing an id and quantity.
+ * @returns {void}
+ */
 function updateTotals(cart) {
     let totalQuantity = 0;
     let totalPrice = 0;
@@ -40,9 +83,22 @@ function updateTotals(cart) {
     document.getElementById("totalPrice").textContent = totalPrice;
 }
 
+
+/**
+ * Handles the change in quantity of a cart item and updates the cart.
+ *
+ * This function is returned as an event handler for when the quantity of a cart item is modified.
+ * It updates the cart with the new quantity, saves the updated cart to local storage, and recalculates
+ * the total quantity and price of the cart.
+ *
+ * @function handleQuantityChange
+ * @param {Array} cart - The array of cart items, where each item contains an id and quantity.
+ * @param {number} index - The index of the cart item in the cart array to be updated.
+ * @returns {Function} A function that handles the input event for changing the item quantity.
+ */
+
 function handleQuantityChange(cart, index) {
     return function (event) {
-        // console.log(JSON.stringify(cart));
         const newQuantity = event.target.value;
         cart[index].quantity = parseInt(newQuantity);
         saveCartToLocalStorage(cart);
@@ -66,6 +122,19 @@ function handleDeleteItem($event) {
     articleElement.remove();
     updateTotals(cart);
 };
+
+/**
+ * Displays the contents of the shopping cart on the page.
+ *
+ * This function retrieves the cart data from local storage, fetches product information from an API,
+ * and dynamically updates the DOM to display each cart item. For each item, it generates an HTML
+ * structure that includes the product image, name, color, price, quantity, and a delete button.
+ * The function also attaches event listeners for handling quantity changes and item deletion.
+ *
+ * @async
+ * @function displayCart
+ * @returns {Promise<void>} A promise that resolves once the cart display logic is complete.
+ */
 
 async function displayCart() {
     const cart = getCartFromLocalStorage();
@@ -112,12 +181,9 @@ async function displayCart() {
         const quantityInput = cartItemElement.querySelector(".itemQuantity");
         quantityInput.addEventListener("input", handleQuantityChange(cart, i));
 
-
-
         const deleteButton = cartItemElement.querySelector(".deleteItem");
         deleteButton.addEventListener(
             "click",
-            // handleDeleteItem(cartItemElement, cartItem.id)
             handleDeleteItem
         );
 
@@ -127,10 +193,19 @@ async function displayCart() {
 }
 
 displayCart();
-
 /**
- * Validate the fields in the form
+ * Validates form fields for an order submission and handles the order process.
+ *
+ * This function validates the user's input in the form fields (first name, last name, address, city, email)
+ * using regular expressions. It displays error messages for invalid inputs in real-time as the user types.
+ * Once the order button is clicked, the function validates all fields again. If all fields are valid,
+ * it retrieves the product information from localStorage, sends the order details to the server via a POST request,
+ * and redirects the user to the confirmation page upon success.
+ *
+ * @function validateOrder
+ * @returns {void}
  */
+functi
 function validateOrder() {
     const formFields = {
         firstName: {
