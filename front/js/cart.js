@@ -97,12 +97,34 @@ function updateTotals(cart) {
  * @returns {Function} A function that handles the input event for changing the item quantity.
  */
 
-function handleQuantityChange(cart, index) {
+// function handleQuantityChange(cart, index) {
+//     return function (event) {
+//         // const newQuantity = event.target.value;
+
+//         const newQuantity = event.target.value;
+//         cart = getCartFromLocalStorage();
+
+// cart = getCartFromLocalStorage();
+//         cart[index].quantity = parseInt(newQuantity);
+//         saveCartToLocalStorage(cart);
+//         updateTotals(cart);
+//     };
+// }
+
+function handleQuantityChange(cart, productId, productColor) {
     return function (event) {
+        // const newQuantity = event.target.value;
+        cart = getCartFromLocalStorage();
         const newQuantity = event.target.value;
-        cart[index].quantity = parseInt(newQuantity);
-        saveCartToLocalStorage(cart);
-        updateTotals(cart);
+        const updated_cart = cart.map((cartItem) =>
+            cartItem.id === productId && cartItem.color === productColor
+                ? { ...cartItem, quantity: parseInt(newQuantity) }
+                : cartItem
+        );
+
+        // cart[index].quantity = parseInt(newQuantity);
+        saveCartToLocalStorage(updated_cart);
+        updateTotals(updated_cart);
     };
 }
 
@@ -179,20 +201,39 @@ async function displayCart() {
         document.getElementById("cart__items").appendChild(cartItemElement);
 
         const quantityInput = cartItemElement.querySelector(".itemQuantity");
-        quantityInput.addEventListener("input", handleQuantityChange(cart, i));
-
-        const deleteButton = cartItemElement.querySelector(".deleteItem");
-        deleteButton.addEventListener(
-            "click",
-            handleDeleteItem
+        quantityInput.addEventListener(
+            "input",
+            handleQuantityChange(cart, cartItem.id, cartItem.color)
         );
 
+        const deleteButton = cartItemElement.querySelector(".deleteItem");
+        deleteButton.addEventListener("click", (event) =>
+            handleDeleteItem(event, cartItem.id, cartItem.color)
+        );
     }
 
     updateTotals(cart);
 }
 
 displayCart();
+//         document.getElementById("cart__items").appendChild(cartItemElement);
+
+//         const quantityInput = cartItemElement.querySelector(".itemQuantity");
+//         quantityInput.addEventListener("input", handleQuantityChange(cart, i));
+
+//         const deleteButton = cartItemElement.querySelector(".deleteItem");
+//         deleteButton.addEventListener(
+//             "click",
+
+//             handleDeleteItem
+//         );
+
+//     }
+
+//     updateTotals(cart);
+// }
+
+// displayCart();
 /**
  * Validates form fields for an order submission and handles the order process.
  *
@@ -205,7 +246,7 @@ displayCart();
  * @function validateOrder
  * @returns {void}
  */
-functi
+
 function validateOrder() {
     const formFields = {
         firstName: {
